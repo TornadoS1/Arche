@@ -1,0 +1,219 @@
+---
+// Simplified geologic column (Cambrian -> today) with the time ranges of major
+// groups, plus what a single flood layer would look like. Each period gets the
+// same row height (not to scale); within a period, ages are placed linearly.
+
+// Period boundaries in million years (ICS International Chronostratigraphic Chart v2024/12)
+const periods = [
+  { name: 'Quartär', top: 0, base: 2.58 },
+  { name: 'Neogen', top: 2.58, base: 23.04 },
+  { name: 'Paläogen', top: 23.04, base: 66.0 },
+  { name: 'Kreide', top: 66.0, base: 143.1 },
+  { name: 'Jura', top: 143.1, base: 201.4 },
+  { name: 'Trias', top: 201.4, base: 251.9 },
+  { name: 'Perm', top: 251.9, base: 298.9 },
+  { name: 'Karbon', top: 298.9, base: 358.86 },
+  { name: 'Devon', top: 358.86, base: 419.62 },
+  { name: 'Silur', top: 419.62, base: 443.1 },
+  { name: 'Ordovizium', top: 443.1, base: 486.85 },
+  { name: 'Kambrium', top: 486.85, base: 538.8 },
+];
+
+// Ranges in million years: [first appearance, last appearance (0 = living today)]
+const groups = [
+  { name: 'Trilobiten', from: 521, to: 251.9 },
+  { name: 'Fische', from: 518, to: 0 },
+  { name: 'Vierbeiner', from: 395, to: 0 },
+  { name: 'Reptilien', from: 312, to: 0 },
+  { name: 'Dinosaurier', from: 225, to: 66 },
+  { name: 'Säugetiere', from: 200, to: 0 },
+  { name: 'Vögel', from: 150, to: 0 },
+  { name: 'Homo sapiens', from: 0.3, to: 0 },
+];
+
+const plotTop = 112;
+const rowH = 34;
+const colX0 = 112;
+const colStep = 26;
+const barW = 10;
+const plotBottom = plotTop + periods.length * rowH;
+
+function ageToY(age: number) {
+  const i = periods.findIndex((p) => age >= p.top && age <= p.base);
+  const p = periods[i];
+  return plotTop + i * rowH + ((age - p.top) / (p.base - p.top)) * rowH;
+}
+
+const fmt = (n: number) => n.toLocaleString('de-DE', { maximumFractionDigits: 1 });
+const bars = groups.map((g, i) => {
+  const x = colX0 + i * colStep;
+  const y1 = ageToY(g.to);
+  const y2 = ageToY(g.from);
+  // keep very short ranges visible as a dot-sized bar
+  const h = Math.max(y2 - y1, barW);
+  const y = Math.max(plotTop, y2 - h);
+  return { ...g, x, y, h: Math.max(y2, y + barW) - y };
+});
+
+const floodTop = plotBottom + 44;
+const floodH = 52;
+const height = floodTop + floodH + 12;
+---
+
+<figure class="fossil-column">
+  <svg viewBox={`0 0 320 ${height}`} role="img" aria-labelledby="fc-title fc-desc">
+    <title id="fc-title">Vereinfachte Zeitsäule: Auftreten großer Tiergruppen vom Kambrium bis heute</title>
+    <desc id="fc-desc">
+      Die Erdzeitalter vom Kambrium (ab 538,8 Millionen Jahren) bis zum Quartär sind untereinander angeordnet. Daneben
+      zeigen Balken, wann Tiergruppen auftreten: Trilobiten vom Kambrium bis zum Ende des Perm, Fische ab dem Kambrium,
+      Vierbeiner ab dem Devon, Reptilien ab dem Karbon, Dinosaurier von der späten Trias bis zum Ende der Kreide,
+      Säugetiere ab dem Ende der Trias, Vögel ab dem späten Jura und Homo sapiens erst im Quartär. Darunter die
+      Erwartung bei einer Flut: alle Gruppen gemeinsam in einer einzigen Schicht.
+    </desc>
+
+    <defs>
+      <pattern id="fc-mud" width="6" height="6" patternUnits="userSpaceOnUse">
+        <rect width="6" height="6" class="mud"></rect>
+        <circle cx="1.5" cy="1.5" r="0.9" class="mud-grain"></circle>
+        <circle cx="4.5" cy="4" r="0.7" class="mud-grain"></circle>
+      </pattern>
+    </defs>
+
+    <!-- group labels, rotated -->
+    {
+      bars.map((b) => (
+        <text
+          x={b.x + barW / 2 + 4}
+          y={plotTop - 6}
+          class="group-label"
+          transform={`rotate(-90 ${b.x + barW / 2 + 4} ${plotTop - 6})`}>
+          {b.name}
+        </text>
+      ))
+    }
+
+    <!-- period rows -->
+    {
+      periods.map((p, i) => (
+        <g>
+          {i % 2 === 0 && <rect x="0" y={plotTop + i * rowH} width="320" height={rowH} class="stripe" />}
+          <text x="6" y={plotTop + i * rowH + 15} class="period">
+            {p.name}
+          </text>
+          <text x="6" y={plotTop + i * rowH + 29} class="age">
+            {i === 0 ? 'bis heute' : `ab ${fmt(p.base)} Mio. J.`}
+          </text>
+        </g>
+      ))
+    }
+    <line x1="0" y1={plotTop} x2="320" y2={plotTop} class="rule"></line>
+    <line x1="0" y1={plotBottom} x2="320" y2={plotBottom} class="rule"></line>
+
+    <!-- ranges -->
+    {bars.map((b) => <rect x={b.x} y={b.y} width={barW} height={b.h} rx="4" class="bar" />)}
+
+    <!-- flood expectation -->
+    <text x="6" y={floodTop - 12} class="period">Erwartung bei einer Flut</text>
+    <rect x={colX0 - 8} y={floodTop} width={colStep * (groups.length - 1) + barW + 16} height={floodH} rx="4" fill="url(#fc-mud)"></rect>
+    <text x="6" y={floodTop + 16} class="age">alle Gruppen</text>
+    <text x="6" y={floodTop + 31} class="age">in einer Schicht,</text>
+    <text x="6" y={floodTop + 46} class="age">nach Gewicht</text>
+    {
+      bars.map((b, i) => (
+        <circle cx={b.x + barW / 2} cy={floodTop + (i % 2 === 0 ? 18 : 34)} r="5" class="dot" />
+      ))
+    }
+  </svg>
+  <figcaption>
+    Vereinfacht, nicht maßstäblich: Jede Periode ist gleich hoch dargestellt, obwohl sie unterschiedlich lange dauerten.
+    Balken zeigen, von wann bis wann eine Gruppe in den Gesteinsschichten vorkommt. Quellen:
+    <a href="https://stratigraphy.org/chart">ICS-Zeittafel 2024</a> ·
+    <a href="https://www.britannica.com/animal/trilobite">Trilobiten</a> ·
+    <a href="https://doi.org/10.1038/46965">Fische</a> ·
+    <a href="https://doi.org/10.1038/nature08623">Vierbeiner</a> ·
+    <a href="https://whc.unesco.org/en/list/1285/">Reptilien</a> ·
+    <a href="https://ucmp.berkeley.edu/diapsids/dinosaur.html">Dinosaurier</a> ·
+    <a href="https://www.britannica.com/animal/Morganucodon">Säugetiere</a> ·
+    <a href="https://www.britannica.com/animal/Archaeopteryx">Vögel</a> ·
+    <a href="https://doi.org/10.1038/nature22336">Homo sapiens</a>
+  </figcaption>
+</figure>
+
+<style>
+  .fossil-column {
+    --fc-mud: #c9b08f;
+    --fc-mud-grain: #a88b66;
+
+    margin: 2rem auto;
+    max-width: 30rem;
+    padding: 1rem 1rem 0.8rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .fossil-column {
+      --fc-mud: #6b5236;
+      --fc-mud-grain: #4f3a24;
+    }
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+    font-family: var(--font-ui);
+  }
+
+  .stripe {
+    fill: var(--surface-2);
+  }
+
+  .rule {
+    stroke: var(--border);
+    stroke-width: 1;
+  }
+
+  .period {
+    font-size: 14px;
+    font-weight: 650;
+    fill: var(--text);
+  }
+
+  .age {
+    font-size: 12px;
+    fill: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .group-label {
+    font-size: 13px;
+    fill: var(--text);
+  }
+
+  .bar {
+    fill: var(--chart-1);
+  }
+
+  .dot {
+    fill: var(--chart-1);
+    stroke: var(--surface);
+    stroke-width: 2;
+  }
+
+  .mud {
+    fill: var(--fc-mud);
+  }
+
+  .mud-grain {
+    fill: var(--fc-mud-grain);
+  }
+
+  figcaption {
+    margin-top: 0.6rem;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+</style>
