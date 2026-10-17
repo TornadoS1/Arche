@@ -10,6 +10,7 @@ import SintflutCheck from '../../components/SintflutCheck.astro';
 import Ergebnis from '../../components/Ergebnis.astro';
 import Fazit from '../../components/Fazit.astro';
 import WallaceMap from '../../components/WallaceMap.astro';
+import KoalaMap from '../../components/KoalaMap.astro';
 import imgKoala from '../../assets/images/biogeographie.jpg';
 
 ## Biogeographie: Die unmögliche Reise um die Welt
@@ -63,11 +64,13 @@ Die Tierwelt ist kein chaotischer Haufen von Überlebenden, die vom Ararat in al
 
 Der Koala ist das perfekte Beispiel dafür, warum die „Rückreise“ vom Ararat biologisch unmöglich ist.
 
-- **Die Diät:** Koalas fressen fast ausschließlich die Blätter bestimmter Eukalyptusarten. Diese Bäume wachsen jedoch nicht auf dem Weg von der Türkei nach Australien.
-- **Das „Care-Paket“:** Ein ausgewachsener Koala frisst etwa 500 bis 1.000 Gramm Eukalyptusblätter pro Tag.[^koala] Vom Ararat bis an die Ostküste Australiens sind es schon in Luftlinie rund 13.000 Kilometer; auf dem Landweg mit Inselsprüngen deutlich mehr. Bei seiner gemütlichen Geschwindigkeit wäre ein Koala-Paar Jahre unterwegs gewesen und hätte tonnenweise frische, spezifisch australische Eukalyptusblätter als Proviant mitschleppen müssen – ein biologisches Unmöglichkeitsszenario.
+- **Die Diät:** Koalas fressen fast ausschließlich die Blätter bestimmter Eukalyptusarten. Eukalyptus ist nur in Australien und auf einigen benachbarten Inseln heimisch;[^eukalyptus] auf fast dem gesamten Weg von der Türkei nach Australien wächst er von Natur aus nicht.
+- **Das „Care-Paket“:** Ein ausgewachsener Koala frisst etwa 500 bis 1.000 Gramm Eukalyptusblätter pro Tag.[^koala] Vom Ararat bis an die Ostküste Australiens sind es schon in Luftlinie rund 13.400 Kilometer; auf dem Landweg mit Inselsprüngen deutlich mehr. Bei seiner gemütlichen Geschwindigkeit wäre ein Koala-Paar Jahre unterwegs gewesen und hätte tonnenweise frische, spezifisch australische Eukalyptusblätter als Proviant mitschleppen müssen – ein biologisches Unmöglichkeitsszenario.
 - **Die Spur:** Auf dem gesamten asiatischen Kontinent gibt es weder lebende Koalas noch fossile Überreste von ihnen. Warum sind sie ohne Zwischenstopp und ohne jemals zu fressen direkt nach Australien „durchmarschiert“, während sie gleichzeitig alle Raubtiere Asiens ignoriert haben?
 
 Kurz gesagt: Ohne ein Wunder-Abo für frischen Eukalyptus-Lieferservice entlang der gesamten Strecke wäre der Koala schon in den ersten Tagen seiner Reise verhungert.
+
+<KoalaMap />
 
 <Figure src={imgKoala} alt="Koala-Mutter mit einem Jungtier auf dem Rücken an einem Baumstamm, daneben Eukalyptuszweige." />
 
@@ -84,3 +87,5 @@ Kurz gesagt: Ohne ein Wunder-Abo für frischen Eukalyptus-Lieferservice entlang 
 [^lambeck]: Lambeck, K. et al. (2014): Sea level and global ice volumes from the Last Glacial Maximum to the Holocene. *PNAS* 111, 15296–15303. [doi:10.1073/pnas.1411762111](https://doi.org/10.1073/pnas.1411762111)
 
 [^koala]: State of Victoria, Department of Environment, Land, Water and Planning (2017): Our Wildlife Fact Sheet – Koala. [PDF](https://www.wildlife.vic.gov.au/__data/assets/pdf_file/0027/92439/Koala.pdf)
+
+[^eukalyptus]: Encyclopaedia Britannica: Eucalyptus. [britannica.com](https://www.britannica.com/plant/Eucalyptus)

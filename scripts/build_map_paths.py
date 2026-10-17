@@ -8,6 +8,8 @@ and run:
     python scripts/build_map_paths.py <ne_10m_land.geojson> <ne_10m_bathymetry_K_200.geojson> <out.json> \
         --bbox 104 -13 142 7 --width 320
 
+Pass "-" instead of the bathymetry file to skip the deep-sea layer.
+
 The output JSON holds the viewBox size and two SVG path strings: "land" and
 "deep" (sea deeper than 200 m). Everything else is shallow shelf sea.
 Projection: plate carree (fine near the equator).
@@ -103,8 +105,10 @@ def main():
 
     with open(args.land, encoding="utf-8") as fh:
         land = json.load(fh)["features"]
-    with open(args.deep, encoding="utf-8") as fh:
-        deep = json.load(fh)["features"]
+    deep = []
+    if args.deep != "-":  # "-" skips the deep-sea layer
+        with open(args.deep, encoding="utf-8") as fh:
+            deep = json.load(fh)["features"]
 
     out = {
         "bbox": [w, s, e, n],
