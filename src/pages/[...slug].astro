@@ -1,0 +1,80 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TOC from '../components/TOC.astro';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  // The start page is served at "/" (see index.astro)
+  return pages.filter((p) => p.id !== 'startseite').map((page) => ({ params: { slug: page.id }, props: { page } }));
+}
+
+const { page } = Astro.props;
+const { Content, headings } = await render(page);
+---
+
+<BaseLayout title={page.data.title} description={page.data.description} ogImage={page.data.ogImage}>
+  <div class="page">
+    <header class="page-header">
+      <h1>{page.data.title}</h1>
+    </header>
+    {
+      page.data.toc && (
+        <aside class="page-toc">
+          <TOC headings={headings} />
+        </aside>
+      )
+    }
+    <article class="prose">
+      <Content />
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    max-width: var(--wide);
+    margin: 0 auto;
+    padding: 2.5rem 1rem 0;
+    display: grid;
+    grid-template-columns: minmax(0, var(--measure)) minmax(0, 15rem);
+    grid-template-areas:
+      'head head'
+      'body toc';
+    column-gap: 3.5rem;
+    justify-content: center;
+  }
+
+  .page-header {
+    grid-area: head;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-toc {
+    grid-area: toc;
+  }
+
+  .page-toc :global(.toc) {
+    position: sticky;
+    top: 5rem;
+  }
+
+  .prose {
+    grid-area: body;
+    min-width: 0;
+  }
+
+  @media (max-width: 960px) {
+    .page {
+      grid-template-columns: minmax(0, var(--measure));
+      grid-template-areas:
+        'head'
+        'toc'
+        'body';
+    }
+
+    .page-toc {
+      margin-bottom: 2rem;
+    }
+  }
+</style>

@@ -1,0 +1,209 @@
+---
+import '@fontsource-variable/source-serif-4';
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import { mainNav, footerNav, SITE_NAME } from '../nav';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  isHome?: boolean;
+}
+
+const { title, description, ogImage = '/images/og-default.jpg', isHome = false } = Astro.props;
+const pageTitle = isHome ? `${title} | ${SITE_NAME}` : `${title} – ${SITE_NAME}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImageUrl = new URL(ogImage, Astro.site);
+const current = Astro.url.pathname.replace(/\/?$/, '/');
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#f7f6f2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#12171c" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content={isHome ? 'website' : 'article'} />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="/" aria-current={current === '/' ? 'page' : undefined}>
+          <img src="/images/logo-512.png" alt="" width="32" height="32" />
+          <span>{SITE_NAME}</span>
+        </a>
+        <nav aria-label="Hauptnavigation">
+          <ul>
+            {
+              mainNav.map((item) => (
+                <li>
+                  <a href={item.href} aria-current={current === item.href ? 'page' : undefined}>
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="inhalt">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p>{SITE_NAME} · Die Arche Noah im Licht der Wissenschaft</p>
+        <nav aria-label="Rechtliches">
+          <ul>
+            {footerNav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-ui);
+  }
+
+  .header-inner {
+    max-width: var(--wide);
+    margin: 0 auto;
+    padding: 0.6rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem 1.5rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .brand img {
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.3rem;
+  }
+
+  nav li {
+    margin: 0;
+  }
+
+  .site-header nav a {
+    display: block;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .site-header nav a:hover {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+
+  .site-header nav a[aria-current='page'] {
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  @media (max-width: 640px) {
+    .site-header {
+      position: static;
+    }
+
+    .header-inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .site-header nav {
+      width: 100%;
+    }
+
+    .site-header nav a {
+      white-space: nowrap;
+      padding: 0.45rem 0.55rem;
+    }
+  }
+
+  .site-footer {
+    margin-top: 5rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .footer-inner {
+    max-width: var(--wide);
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem 2rem;
+  }
+
+  .footer-inner p {
+    margin: 0;
+  }
+
+  .site-footer nav ul {
+    gap: 1.2rem;
+  }
+
+  .site-footer a {
+    color: var(--text-muted);
+  }
+</style>

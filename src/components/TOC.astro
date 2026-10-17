@@ -1,0 +1,65 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+// Pages with several h2 sections list those; single-section pages list their h3 steps.
+const h2 = Astro.props.headings.filter((h) => h.depth === 2);
+const items = h2.length >= 2 ? h2 : Astro.props.headings.filter((h) => h.depth === 3);
+---
+
+{
+  items.length >= 2 && (
+    <nav class="toc" aria-labelledby="toc-title">
+      <p id="toc-title" class="toc-title">Inhalt</p>
+      <ul>
+        {items.map((h) => (
+          <li>
+            <a href={`#${h.slug}`}>{h.text}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  .toc {
+    font-family: var(--font-ui);
+    font-size: 0.92rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem 0.6rem;
+  }
+
+  .toc-title {
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 0.4rem;
+    line-height: 1.4;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+</style>

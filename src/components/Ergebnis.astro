@@ -1,0 +1,20 @@
+---
+// Styled block for the "Ergebnis" step. Heading goes into the slot.
+---
+
+<section class="ergebnis">
+  <slot />
+</section>
+
+<style>
+  .ergebnis {
+    margin: 2rem 0;
+    padding: 0.2rem 0 0.1rem 1.3rem;
+    border-left: 4px solid var(--accent);
+  }
+
+  .ergebnis :global(h3) {
+    margin-top: 0.6rem;
+    color: var(--accent);
+  }
+</style>

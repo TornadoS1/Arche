@@ -1,0 +1,50 @@
+---
+// Highlighted box for the "Sintflut-Check" step. Put the heading inside the slot (Markdown ###)
+// so it stays part of the document outline and the TOC.
+---
+
+<section class="sintflut-check">
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path
+      d="M2 15c2 0 2-1.5 4-1.5s2 1.5 4 1.5 2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M2 19.5c2 0 2-1.5 4-1.5s2 1.5 4 1.5 2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"></path>
+    <path d="M9 7.5l2.2 2.2L15.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+  <slot />
+</section>
+
+<style>
+  .sintflut-check {
+    position: relative;
+    margin: 2rem 0;
+    padding: 1.25rem 1.4rem 0.4rem 4.2rem;
+    background: var(--check-bg);
+    border: 1px solid var(--check-border);
+    border-left-width: 5px;
+    border-radius: var(--radius);
+  }
+
+  .icon {
+    position: absolute;
+    left: 1.1rem;
+    top: 1.3rem;
+    width: 2.1rem;
+    height: 2.1rem;
+    color: var(--check);
+  }
+
+  .sintflut-check :global(h3) {
+    margin-top: 0;
+    color: var(--check);
+  }
+
+  @media (max-width: 520px) {
+    .sintflut-check {
+      padding-left: 1.1rem;
+      padding-top: 3.6rem;
+    }
+  }
+</style>

@@ -1,0 +1,37 @@
+---
+// Highlighted conclusion card at the end of a section.
+---
+
+<aside class="fazit" aria-label="Fazit">
+  <p class="label">Fazit</p>
+  <div class="body"><slot /></div>
+</aside>
+
+<style>
+  .fazit {
+    margin: 2.2rem 0;
+    padding: 1.3rem 1.5rem 0.3rem;
+    background: var(--fazit-bg);
+    color: var(--fazit-text);
+    border-radius: calc(var(--radius) + 4px);
+    box-shadow: 0 6px 24px -12px rgb(0 0 0 / 0.45);
+  }
+
+  .label {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .body {
+    font-size: 1.15rem;
+  }
+
+  .fazit :global(a) {
+    color: inherit;
+  }
+</style>
