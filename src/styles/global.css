@@ -198,6 +198,23 @@ strong {
   color: var(--text-muted);
 }
 
+.prose #footnote-label {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.prose .footnotes ol {
+  padding-left: 1.4rem;
+}
+
+.prose .footnotes li {
+  margin-bottom: 0.6rem;
+  overflow-wrap: anywhere;
+}
+
 .prose sup a {
   text-decoration: none;
   font-family: var(--font-ui);
