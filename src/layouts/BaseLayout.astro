@@ -9,9 +9,11 @@ interface Props {
   description: string;
   ogImage?: string;
   isHome?: boolean;
+  // Error pages: no canonical URL, kept out of search indexes
+  noindex?: boolean;
 }
 
-const { title, description, ogImage = '/images/og-default.jpg', isHome = false } = Astro.props;
+const { title, description, ogImage = '/images/og-default.jpg', isHome = false, noindex = false } = Astro.props;
 const pageTitle = isHome ? `${title} | ${SITE_NAME}` : `${title} – ${SITE_NAME}`;
 // Path relative to the base, so canonical/OG URLs always point at the production domain
 const path = Astro.url.pathname.slice(BASE.length) || '/';
@@ -27,7 +29,7 @@ const current = path.replace(/\/?$/, '/');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <link rel="icon" href={withBase('/favicon.ico')} sizes="any" />
     <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
     <link rel="sitemap" href={withBase('/sitemap-index.xml')} />
@@ -39,7 +41,7 @@ const current = path.replace(/\/?$/, '/');
     <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
