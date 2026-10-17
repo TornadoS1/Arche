@@ -1,0 +1,281 @@
+---
+// Start page illustration: the ark on the water above a cross-section of
+// sediment layers with fossils, on measuring-grid paper. Colours follow the
+// site tokens and switch with prefers-color-scheme.
+
+const W = 1200;
+const H = 420;
+const waterY = 256;
+
+// Smooth wave line from x=0 to W, used for the water surface and the strata
+function wave(y: number, amp: number, len: number, phase = 0) {
+  const pts: string[] = [`M 0 ${y + amp * Math.sin(phase)}`];
+  for (let x = 20; x <= W; x += 20) {
+    pts.push(`L ${x} ${(y + amp * Math.sin((x / len) * 2 * Math.PI + phase)).toFixed(1)}`);
+  }
+  return pts.join(' ');
+}
+
+const band = (y: number, amp: number, len: number, phase: number) => `${wave(y, amp, len, phase)} L ${W} ${H} L 0 ${H} Z`;
+const waterBack = `${wave(waterY, 5, 260, 0)} L ${W} ${H} L 0 ${H} Z`;
+const waterFront = `${wave(waterY + 18, 6, 320, 1.4)} L ${W} ${H} L 0 ${H} Z`;
+const strata = [
+  { d: band(318, 4, 520, 0.3), cls: 's1' },
+  { d: band(344, 5, 610, 1.1), cls: 's2' },
+  { d: band(370, 4, 480, 2.0), cls: 's3' },
+  { d: band(396, 3, 700, 0.6), cls: 's4' },
+];
+
+// Ammonite: a spiral of quarter arcs with shrinking radius
+function spiral(cx: number, cy: number, r: number, turns = 2.5) {
+  const steps = Math.round(turns * 24);
+  const pts: string[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const a = (i / 24) * 2 * Math.PI;
+    const rr = r * (1 - i / (steps + 6));
+    pts.push(`${i ? 'L' : 'M'} ${(cx + rr * Math.cos(a)).toFixed(1)} ${(cy + rr * Math.sin(a)).toFixed(1)}`);
+  }
+  return pts.join(' ');
+}
+
+const gridX = Array.from({ length: W / 40 + 1 }, (_, i) => i * 40);
+const gridY = Array.from({ length: Math.floor(waterY / 40) + 1 }, (_, i) => i * 40);
+---
+
+<figure class="hero-illustration">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="hero-title">
+    <title id="hero-title">
+      Illustration: Die Arche auf dem Wasser vor dem Berg Ararat, darüber eine Taube mit Ölzweig. Unter der
+      Wasseroberfläche ein Querschnitt durch Gesteinsschichten mit Fossilien, im Hintergrund ein Messraster.
+    </title>
+    <defs>
+      <linearGradient id="hero-sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" class="sky-top" />
+        <stop offset="1" class="sky-bottom" />
+      </linearGradient>
+    </defs>
+
+    <rect width={W} height={H} fill="url(#hero-sky)" />
+    <g class="grid">
+      {gridX.map((x) => <line x1={x} y1="0" x2={x} y2={waterY} />)}
+      {gridY.map((y) => <line x1="0" y1={y} x2={W} y2={y} />)}
+    </g>
+
+    <g class="sun">
+      <circle cx="846" cy="84" r="66" class="halo" />
+      <circle cx="846" cy="84" r="40" />
+    </g>
+
+    <path class="mountain far" d={`M 640 ${waterY} L 760 214 L 820 226 L 900 196 L 940 210 L 980 ${waterY} Z`} />
+    <path
+      class="mountain"
+      d={`M 760 ${waterY} L 900 196 L 965 142 L 1012 110 L 1058 146 L 1096 170 L 1132 162 L 1172 182 L ${W} 196 L ${W} ${waterY} Z`}
+    />
+    <path class="snow" d="M 986 128 L 1012 110 L 1040 132 L 1026 128 L 1014 138 L 1000 126 Z" />
+
+    <path class="water back" d={waterBack} />
+
+    <g class="ark">
+      <path class="hull" d="M 316 214 Q 330 234 350 234 L 614 234 Q 634 234 648 214 L 632 270 Q 622 290 596 290 L 368 290 Q 342 290 332 270 Z" />
+      <path class="plank" d="M 328 252 L 636 252 M 336 270 L 630 270" />
+      <rect class="cabin" x="378" y="190" width="208" height="44" />
+      <path class="roof" d="M 364 193 L 482 158 L 600 193 Z" />
+      <rect class="window" x="404" y="202" width="22" height="16" rx="2" />
+      <rect class="window" x="446" y="202" width="22" height="16" rx="2" />
+      <rect class="door" x="490" y="198" width="26" height="36" rx="2" />
+      <rect class="window" x="538" y="202" width="22" height="16" rx="2" />
+    </g>
+
+    <path class="water front" d={waterFront} />
+
+    {strata.map((s) => <path class={`stratum ${s.cls}`} d={s.d} />)}
+
+    <g class="fossil">
+      <path d={spiral(214, 360, 13)} />
+      <path d={spiral(772, 384, 10)} />
+      <path d="M 1046 338 q 10 -16 20 0 z M 1050 336 l 6 -10 M 1056 337 l 0 -11 M 1062 336 l -6 -10" />
+      <path d="M 430 334 c 6 -8 18 -8 24 0 M 436 334 c 2 -4 10 -4 12 0" />
+      <path d="M 560 404 l 18 -4 l 14 4 l -14 4 z M 572 402 l 0 4" />
+    </g>
+
+    <g class="dove">
+      <path class="body" d="M 214 112 q 22 -10 46 -2 q -10 10 -30 10 q -12 0 -16 -8 z" />
+      <path class="wing" d="M 226 108 q 4 -26 26 -34 q -2 22 -14 34 z" />
+      <path class="twig" d="M 260 112 q 12 4 22 12" />
+      <ellipse class="leaf" cx="274" cy="114" rx="6" ry="2.6" transform="rotate(30 274 114)" />
+      <ellipse class="leaf" cx="282" cy="124" rx="6" ry="2.6" transform="rotate(50 282 124)" />
+    </g>
+  </svg>
+</figure>
+
+<style>
+  .hero-illustration {
+    --sky-top: #dce9f3;
+    --sky-bottom: #f7f6f2;
+    --grid: #0b4f7c;
+    --sun: #f2c879;
+    --mountain: #b9c6d1;
+    --mountain-far: #d3dce4;
+    --snow: #ffffff;
+    --water-back: #6aa6e0;
+    --water-front: #2a78d6;
+    --hull: #8a5a2b;
+    --cabin: #b47c45;
+    --roof: #5f3a1a;
+    --window: #f2c879;
+    --s1: #e9d9b6;
+    --s2: #dcc292;
+    --s3: #c8a66d;
+    --s4: #a98653;
+    --fossil: #6e5330;
+    --dove: #ffffff;
+    --dove-line: #55606b;
+    --leaf: #3f8a3a;
+
+    margin: 1.5rem 0 2rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .hero-illustration {
+      --sky-top: #1b3346;
+      --sky-bottom: #12171c;
+      --grid: #7cc0ec;
+      --sun: #f3c27f;
+      --mountain: #33414d;
+      --mountain-far: #26313b;
+      --snow: #cfd8df;
+      --water-back: #2c5f94;
+      --water-front: #3987e5;
+      --hull: #a8743f;
+      --cabin: #c48d55;
+      --roof: #6e4625;
+      --window: #f3c27f;
+      --s1: #4a3f2e;
+      --s2: #574a33;
+      --s3: #65553a;
+      --s4: #726043;
+      --fossil: #d9bd8c;
+      --dove: #e5e9ed;
+      --dove-line: #a3adb7;
+      --leaf: #6cbf62;
+    }
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+
+  .sky-top {
+    stop-color: var(--sky-top);
+  }
+
+  .sky-bottom {
+    stop-color: var(--sky-bottom);
+  }
+
+  .grid line {
+    stroke: var(--grid);
+    stroke-width: 1;
+    opacity: 0.08;
+  }
+
+  .sun circle {
+    fill: var(--sun);
+  }
+
+  .sun .halo {
+    opacity: 0.25;
+  }
+
+  .mountain {
+    fill: var(--mountain);
+  }
+
+  .mountain.far {
+    fill: var(--mountain-far);
+  }
+
+  .snow {
+    fill: var(--snow);
+  }
+
+  .water.back {
+    fill: var(--water-back);
+  }
+
+  .water.front {
+    fill: var(--water-front);
+    opacity: 0.92;
+  }
+
+  .hull {
+    fill: var(--hull);
+  }
+
+  .plank {
+    fill: none;
+    stroke: var(--roof);
+    stroke-width: 2;
+    opacity: 0.6;
+  }
+
+  .cabin {
+    fill: var(--cabin);
+  }
+
+  .roof,
+  .door {
+    fill: var(--roof);
+  }
+
+  .window {
+    fill: var(--window);
+  }
+
+  .stratum.s1 {
+    fill: var(--s1);
+  }
+
+  .stratum.s2 {
+    fill: var(--s2);
+  }
+
+  .stratum.s3 {
+    fill: var(--s3);
+  }
+
+  .stratum.s4 {
+    fill: var(--s4);
+  }
+
+  .fossil path {
+    fill: none;
+    stroke: var(--fossil);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.8;
+  }
+
+  .dove .body,
+  .dove .wing {
+    fill: var(--dove);
+    stroke: var(--dove-line);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+
+  .dove .twig {
+    fill: none;
+    stroke: var(--leaf);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .dove .leaf {
+    fill: var(--leaf);
+  }
+</style>
