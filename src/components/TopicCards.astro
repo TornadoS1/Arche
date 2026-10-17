@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { withBase } from '../nav';
 import geologie from '../assets/images/geologie-fossilien.jpg';
 import biogeographie from '../assets/images/biogeographie.jpg';
 import biologie from '../assets/images/biologie-genetik.jpg';
@@ -40,7 +41,7 @@ const topics = [
         <Image src={t.img} alt="" widths={[400, 700]} sizes="(max-width: 640px) 100vw, 34rem" />
         <div class="card-body">
           <h3>
-            <a href={t.href}>{t.title}</a>
+            <a href={withBase(t.href)}>{t.title}</a>
           </h3>
           <p>{t.text}</p>
         </div>

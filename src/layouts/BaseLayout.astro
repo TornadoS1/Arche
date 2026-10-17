@@ -2,7 +2,7 @@
 import '@fontsource-variable/source-serif-4';
 import '@fontsource-variable/inter';
 import '../styles/global.css';
-import { mainNav, footerNav, SITE_NAME } from '../nav';
+import { mainNav, footerNav, SITE_NAME, BASE, withBase } from '../nav';
 
 interface Props {
   title: string;
@@ -13,9 +13,11 @@ interface Props {
 
 const { title, description, ogImage = '/images/og-default.jpg', isHome = false } = Astro.props;
 const pageTitle = isHome ? `${title} | ${SITE_NAME}` : `${title} – ${SITE_NAME}`;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+// Path relative to the base, so canonical/OG URLs always point at the production domain
+const path = Astro.url.pathname.slice(BASE.length) || '/';
+const canonical = new URL(path, Astro.site);
 const ogImageUrl = new URL(ogImage, Astro.site);
-const current = Astro.url.pathname.replace(/\/?$/, '/');
+const current = path.replace(/\/?$/, '/');
 ---
 
 <!doctype html>
@@ -26,9 +28,9 @@ const current = Astro.url.pathname.replace(/\/?$/, '/');
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href={withBase('/favicon.ico')} sizes="any" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <link rel="sitemap" href={withBase('/sitemap-index.xml')} />
     <meta name="theme-color" content="#f7f6f2" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#12171c" media="(prefers-color-scheme: dark)" />
 
@@ -48,8 +50,8 @@ const current = Astro.url.pathname.replace(/\/?$/, '/');
 
     <header class="site-header">
       <div class="header-inner">
-        <a class="brand" href="/" aria-current={current === '/' ? 'page' : undefined}>
-          <img src="/images/logo-512.png" alt="" width="32" height="32" />
+        <a class="brand" href={withBase('/')} aria-current={current === '/' ? 'page' : undefined}>
+          <img src={withBase('/images/logo-512.png')} alt="" width="32" height="32" />
           <span>{SITE_NAME}</span>
         </a>
         <nav aria-label="Hauptnavigation">
@@ -57,7 +59,7 @@ const current = Astro.url.pathname.replace(/\/?$/, '/');
             {
               mainNav.map((item) => (
                 <li>
-                  <a href={item.href} aria-current={current === item.href ? 'page' : undefined}>
+                  <a href={withBase(item.href)} aria-current={current === item.href ? 'page' : undefined}>
                     {item.label}
                   </a>
                 </li>
@@ -77,7 +79,7 @@ const current = Astro.url.pathname.replace(/\/?$/, '/');
         <p>{SITE_NAME} · Die Arche Noah im Licht der Wissenschaft</p>
         <nav aria-label="Rechtliches">
           <ul>
-            {footerNav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+            {footerNav.map((item) => <li><a href={withBase(item.href)}>{item.label}</a></li>)}
           </ul>
         </nav>
       </div>

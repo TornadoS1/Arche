@@ -12,3 +12,9 @@ export const footerNav = [
 ];
 
 export const SITE_NAME = 'Arche Noah Mythos';
+
+// Base path without trailing slash: '' in production, e.g. '/Arche' for the github.io preview
+export const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Prefix a root-relative path with the configured base
+export const withBase = (path: string) => `${BASE}${path}`;
