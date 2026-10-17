@@ -1,0 +1,214 @@
+---
+// Map of Southeast Asia with the Wallace Line, the Sunda and Sahul shelves
+// (sea shallower than 200 m) and Bali/Lombok. Coastlines and the 200 m depth
+// contour come from Natural Earth (public domain), simplified by
+// scripts/build_map_paths.py into src/data/wallace-map.json.
+import map from '../data/wallace-map.json';
+
+const [west, , , north] = map.bbox;
+const p = (lon: number, lat: number) => [(lon - west) * map.scale, (north - lat) * map.scale] as const;
+const pt = (lon: number, lat: number) => p(lon, lat).map((v) => v.toFixed(1)).join(' ');
+
+// Course of the line after Wallace (1863): Lombok Strait, then Makassar Strait
+// between Borneo and Sulawesi into the Celebes Sea
+const line = [
+  [115.85, -9.6],
+  [115.85, -8.3],
+  [116.3, -7.0],
+  [117.3, -5.0],
+  [117.9, -3.0],
+  [118.6, -1.0],
+  [119.5, 1.0],
+  [120.3, 2.8],
+  [121.0, 4.4],
+] as const;
+const linePath = 'M' + line.map(([lon, lat]) => pt(lon, lat)).join('L');
+
+const labels = [
+  { t: 'Sunda-Schelf', lon: 110.4, lat: -4.4, cls: 'region' },
+  { t: 'Sahul-Schelf', lon: 133.6, lat: -10.0, cls: 'region' },
+  { t: 'Borneo', lon: 113.9, lat: 0.6, cls: 'land' },
+  { t: 'Sulawesi', lon: 121.8, lat: -2.6, cls: 'land' },
+  { t: 'Java', lon: 109.4, lat: -9.7, cls: 'land' },
+  { t: 'Neuguinea', lon: 138.6, lat: -4.4, cls: 'land' },
+  { t: 'Australien', lon: 132.8, lat: -12.6, cls: 'land' },
+];
+
+const [baliX, baliY] = p(115.1, -8.4);
+const [lombokX, lombokY] = p(116.3, -8.65);
+const [baliLx, baliLy] = p(112.4, -11.3);
+const [lombokLx, lombokLy] = p(118.6, -11.3);
+const [wlX, wlY] = p(121.5, 4.3);
+---
+
+<figure class="wallace-map">
+  <svg viewBox={`0 0 ${map.width} ${map.height}`} role="img" aria-labelledby="wm-title wm-desc">
+    <title id="wm-title">Karte: Wallace-Linie zwischen Sunda- und Sahul-Schelf</title>
+    <desc id="wm-desc">
+      Karte von Südostasien bis Neuguinea und Nordaustralien. Flache Schelfmeere unter 200 Meter Tiefe sind hell
+      dargestellt: der Sunda-Schelf im Westen um Sumatra, Java und Borneo und der Sahul-Schelf im Osten zwischen
+      Neuguinea und Australien. Dazwischen liegt tiefes Meer. Die Wallace-Linie verläuft durch die schmale Lombokstraße
+      zwischen Bali und Lombok und weiter durch die Makassarstraße zwischen Borneo und Sulawesi.
+    </desc>
+
+    <rect width={map.width} height={map.height} class="shelf"></rect>
+    <path d={map.deep} class="deep" fill-rule="evenodd"></path>
+    <path d={map.land} class="land-fill" fill-rule="evenodd"></path>
+
+    <path d={linePath} class="wallace"></path>
+    <text x={wlX} y={wlY} class="label strong halo" text-anchor="start">Wallace-Linie</text>
+
+    {
+      labels.map((l) => {
+        const [x, y] = p(l.lon, l.lat);
+        return (
+          <text x={x} y={y} class={`label halo ${l.cls}`} text-anchor="middle">
+            {l.t}
+          </text>
+        );
+      })
+    }
+
+    <!-- Bali / Lombok callouts -->
+    <line x1={baliX} y1={baliY} x2={baliLx + 6} y2={baliLy - 9} class="leader"></line>
+    <line x1={lombokX} y1={lombokY} x2={lombokLx - 6} y2={lombokLy - 9} class="leader"></line>
+    <text x={baliLx} y={baliLy} class="label strong halo" text-anchor="middle">Bali</text>
+    <text x={lombokLx} y={lombokLy} class="label strong halo" text-anchor="middle">Lombok</text>
+  </svg>
+
+  <div class="legend" aria-hidden="true">
+    <span><i class="sw shelf-sw"></i>Schelfmeer, flacher als 200 m</span>
+    <span><i class="sw deep-sw"></i>tiefes Meer</span>
+    <span><i class="sw line-sw"></i>Wallace-Linie</span>
+  </div>
+
+  <figcaption>
+    In den Eiszeiten lag der Meeresspiegel rund 130 m tiefer: Die Schelfe fielen weitgehend trocken, Asien war mit Java,
+    Bali und Borneo verbunden, Australien mit Neuguinea. Die tiefe Lombokstraße blieb dagegen immer Meer. Verlauf der
+    Linie nach
+    <a href="https://doi.org/10.2307/1798448">Wallace (1863)</a>; Küsten und 200-m-Tiefenlinie:
+    <a href="https://www.naturalearthdata.com/">Natural Earth</a> (gemeinfrei), vereinfacht.
+  </figcaption>
+</figure>
+
+<style>
+  .wallace-map {
+    --wm-shelf: #d4e8f3;
+    --wm-deep: #8db6d1;
+    --wm-land: #ebe5d6;
+    --wm-coast: #b8ad94;
+    --wm-line: #c2410c;
+
+    margin: 2rem 0;
+    padding: 0.8rem 0.8rem 0.7rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font-ui);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .wallace-map {
+      --wm-shelf: #2b5a77;
+      --wm-deep: #142f45;
+      --wm-land: #4a4740;
+      --wm-coast: #6e695e;
+      --wm-line: #fb923c;
+    }
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+
+  .shelf {
+    fill: var(--wm-shelf);
+  }
+
+  .deep {
+    fill: var(--wm-deep);
+  }
+
+  .land-fill {
+    fill: var(--wm-land);
+    stroke: var(--wm-coast);
+    stroke-width: 0.4;
+  }
+
+  .wallace {
+    fill: none;
+    stroke: var(--wm-line);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .leader {
+    stroke: var(--text);
+    stroke-width: 0.8;
+  }
+
+  .label {
+    font-size: 11px;
+    fill: var(--text);
+  }
+
+  .label.region {
+    font-style: italic;
+    fill: var(--text);
+  }
+
+  .label.strong {
+    font-weight: 700;
+  }
+
+  .halo {
+    paint-order: stroke;
+    stroke: var(--surface);
+    stroke-width: 2.5px;
+    stroke-linejoin: round;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1rem;
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .sw {
+    display: inline-block;
+    width: 0.9rem;
+    height: 0.7rem;
+    margin-right: 0.35rem;
+    vertical-align: -0.05rem;
+    border-radius: 2px;
+  }
+
+  .shelf-sw {
+    background: var(--wm-shelf);
+    border: 1px solid var(--border);
+  }
+
+  .deep-sw {
+    background: var(--wm-deep);
+  }
+
+  .line-sw {
+    height: 3px;
+    vertical-align: 0.2rem;
+    background: var(--wm-line);
+  }
+
+  figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+</style>
