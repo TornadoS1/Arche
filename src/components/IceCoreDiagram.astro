@@ -1,0 +1,216 @@
+---
+// Schematic ice core: observed continuous annual layers vs. what a global flood
+// ~4,000 years ago would have left behind. Not to scale.
+
+const top = 56;
+const floodY = 160; // schematic position of "~4,000 years ago"
+const bottomLeft = 372;
+const rockH = 22;
+
+// Annual layer pairs (summer + winter), thinning with depth as the ice compacts
+function layers(from: number, to: number, start = 14) {
+  const out: { y: number; h: number; kind: 'summer' | 'winter' }[] = [];
+  let y = from;
+  let t = start;
+  while (y < to) {
+    const hs = Math.min(t * 0.55, to - y);
+    out.push({ y, h: hs, kind: 'summer' });
+    y += hs;
+    if (y >= to) break;
+    const hw = Math.min(t * 0.45, to - y);
+    out.push({ y, h: hw, kind: 'winter' });
+    y += hw;
+    t = Math.max(t * 0.93, 2.2);
+  }
+  return out;
+}
+
+const coreW = 58;
+const left = { x: 30, layers: layers(top, bottomLeft) };
+const right = { x: 222, layers: layers(top, floodY) };
+const mudH = 30;
+---
+
+<figure class="icecore">
+  <svg viewBox="0 0 360 440" role="img" aria-labelledby="icecore-title icecore-desc">
+    <title id="icecore-title">Schema: Eisbohrkern – Befund und Erwartung bei einer Flut</title>
+    <desc id="icecore-desc">
+      Links der tatsächliche Befund: helle Sommer- und dunklere Winterlagen liegen von heute bis über 100.000 Jahre
+      zurück lückenlos übereinander; auch vor rund 4.000 Jahren gibt es keine Störung. Rechts die Erwartung bei einer
+      globalen Flut vor rund 4.000 Jahren: Jahresschichten nur bis zu diesem Zeitpunkt, darunter eine Schlammschicht
+      und kein älteres Eis, weil der Eisschild aufgeschwommen und geschmolzen wäre.
+    </desc>
+
+    <defs>
+      <pattern id="ic-mud" width="6" height="6" patternUnits="userSpaceOnUse">
+        <rect width="6" height="6" class="mud"></rect>
+        <circle cx="1.5" cy="1.5" r="0.9" class="mud-grain"></circle>
+        <circle cx="4.5" cy="4" r="0.7" class="mud-grain"></circle>
+      </pattern>
+      <pattern id="ic-rock" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect width="6" height="6" class="rock"></rect>
+        <line x1="0" y1="0" x2="0" y2="6" class="rock-line"></line>
+      </pattern>
+    </defs>
+
+    <!-- column headings -->
+    <text x={left.x + coreW / 2} y="22" class="heading" text-anchor="middle">Befund</text>
+    <text x={right.x + coreW / 2} y="22" class="heading" text-anchor="middle">Erwartung</text>
+    <text x={right.x + coreW / 2} y="38" class="sub" text-anchor="middle">bei einer Flut</text>
+
+    <!-- left core: continuous layers -->
+    {left.layers.map((l) => <rect x={left.x} y={l.y} width={coreW} height={l.h} class={l.kind} />)}
+    <rect x={left.x} y={bottomLeft} width={coreW} height={rockH} fill="url(#ic-rock)" />
+    <rect x={left.x} y={top} width={coreW} height={bottomLeft + rockH - top} class="outline" />
+
+    <!-- right core: layers only after the flood, mud, then bedrock -->
+    {right.layers.map((l) => <rect x={right.x} y={l.y} width={coreW} height={l.h} class={l.kind} />)}
+    <rect x={right.x} y={floodY} width={coreW} height={mudH} fill="url(#ic-mud)" />
+    <rect x={right.x} y={floodY + mudH} width={coreW} height={rockH} fill="url(#ic-rock)" />
+    <rect x={right.x} y={top} width={coreW} height={floodY + mudH + rockH - top} class="outline" />
+
+    <!-- flood date marker across both cores -->
+    <line x1={left.x - 6} y1={floodY} x2={right.x + coreW + 6} y2={floodY} class="marker" />
+
+    <!-- labels, left core -->
+    <text x={left.x + coreW + 8} y={top + 4} class="label">heute</text>
+    <text x={left.x + coreW + 8} y={floodY - 23} class="label">vor ~4.000</text>
+    <text x={left.x + coreW + 8} y={floodY - 7} class="label">Jahren:</text>
+    <text x={left.x + coreW + 8} y={floodY + 17} class="label strong">ungestört</text>
+    <text x={left.x + coreW + 8} y={bottomLeft - 16} class="label">über 100.000</text>
+    <text x={left.x + coreW + 8} y={bottomLeft - 1} class="label">Jahre (Grönland)</text>
+
+    <!-- labels, right core -->
+    <text x={right.x + coreW + 8} y={top + 4} class="label">heute</text>
+    <text x={right.x + coreW + 8} y={floodY + 13} class="label strong">Schlamm-</text>
+    <text x={right.x + coreW + 8} y={floodY + 28} class="label strong">schicht</text>
+    <text x={right.x + coreW / 2} y={floodY + mudH + rockH + 24} class="label" text-anchor="middle">kein älteres Eis:</text>
+    <text x={right.x + coreW / 2} y={floodY + mudH + rockH + 40} class="label" text-anchor="middle">Eisschild wäre</text>
+    <text x={right.x + coreW / 2} y={floodY + mudH + rockH + 56} class="label" text-anchor="middle">aufgeschwommen</text>
+    <text x={right.x + coreW / 2} y={floodY + mudH + rockH + 72} class="label" text-anchor="middle">und geschmolzen</text>
+
+    <!-- legend -->
+    <g class="legend" transform="translate(30 422)">
+      <rect y="1" width="12" height="11" class="summer swatch"></rect>
+      <text x="17" y="11" class="label">Sommer</text>
+      <rect x="80" y="1" width="12" height="11" class="winter swatch"></rect>
+      <text x="97" y="11" class="label">Winter</text>
+      <rect x="154" y="1" width="12" height="11" fill="url(#ic-mud)" class="swatch"></rect>
+      <text x="171" y="11" class="label">Schlamm</text>
+      <rect x="240" y="1" width="12" height="11" fill="url(#ic-rock)" class="swatch"></rect>
+      <text x="257" y="11" class="label">Fels</text>
+    </g>
+  </svg>
+  <figcaption>
+    Schema, nicht maßstabsgetreu. Mit zunehmender Tiefe werden die Jahresschichten durch den Druck des Eises immer
+    dünner. Eine globale Flut hätte eine Schlammschicht hinterlassen, und älteres Eis dürfte es gar nicht geben.
+  </figcaption>
+</figure>
+
+<style>
+  .icecore {
+    --ic-summer: #eef5fa;
+    --ic-winter: #b9cfdf;
+    --ic-mud: #9a7650;
+    --ic-mud-grain: #6e5233;
+    --ic-rock: #b4b4b0;
+    --ic-rock-line: #8a8a86;
+    --ic-outline: #6b7a86;
+
+    margin: 2rem auto;
+    max-width: 30rem;
+    padding: 1rem 1rem 0.8rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .icecore {
+      --ic-summer: #c9dbe8;
+      --ic-winter: #7e9bb0;
+      --ic-mud: #7a5c3b;
+      --ic-mud-grain: #4f3a24;
+      --ic-rock: #5d5d5a;
+      --ic-rock-line: #45453f;
+      --ic-outline: #9fb0bd;
+    }
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+    font-family: var(--font-ui);
+  }
+
+  .summer {
+    fill: var(--ic-summer);
+  }
+
+  .winter {
+    fill: var(--ic-winter);
+  }
+
+  .mud {
+    fill: var(--ic-mud);
+  }
+
+  .mud-grain {
+    fill: var(--ic-mud-grain);
+  }
+
+  .rock {
+    fill: var(--ic-rock);
+  }
+
+  .rock-line {
+    stroke: var(--ic-rock-line);
+    stroke-width: 2;
+  }
+
+  .outline {
+    fill: none;
+    stroke: var(--ic-outline);
+    stroke-width: 1;
+  }
+
+  .swatch {
+    stroke: var(--ic-outline);
+    stroke-width: 0.75;
+  }
+
+  .marker {
+    stroke: var(--check);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 3;
+  }
+
+  .heading {
+    font-size: 16px;
+    font-weight: 700;
+    fill: var(--text);
+  }
+
+  .sub {
+    font-size: 12.5px;
+    fill: var(--text-muted);
+  }
+
+  .label {
+    font-size: 13px;
+    fill: var(--text-muted);
+  }
+
+  .label.strong {
+    font-weight: 650;
+    fill: var(--text);
+  }
+
+  figcaption {
+    margin-top: 0.6rem;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+</style>
