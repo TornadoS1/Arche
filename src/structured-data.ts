@@ -8,6 +8,8 @@ const author = {
   '@type': 'Person',
   name: 'Martin Schönebeck',
   url: abs('/ueber/'),
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Universität zu Köln' },
+  knowsAbout: ['Geophysik', 'Meteorologie'],
 };
 
 export function websiteSchema(description: string) {
