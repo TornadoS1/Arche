@@ -1,0 +1,202 @@
+---
+// Schematic plan view of a mid-ocean ridge with mirror-symmetric magnetic stripes,
+// followed by a speed comparison (today vs. "flood tempo") as two stat tiles.
+
+// Stripe widths from the ridge outward (schematic, not real reversal ages)
+const widths = [7, 4, 15, 5, 4, 3, 11, 9, 3, 6];
+const W = 320;
+const mid = W / 2;
+const top = 34;
+const h = 92;
+
+let x = 0;
+const stripes = widths.map((w, i) => {
+  const s = { from: x, w, normal: i % 2 === 0 };
+  x += w;
+  return s;
+});
+const scale = (mid - 12) / x; // fill to near the edges
+---
+
+<figure class="stripes">
+  <svg viewBox={`0 0 ${W} 190`} role="img" aria-labelledby="ms-title ms-desc">
+    <title id="ms-title">Schema: Magnetstreifen beiderseits eines mittelozeanischen Rückens</title>
+    <desc id="ms-desc">
+      In der Mitte verläuft der Rücken, an dem neuer Meeresboden entsteht. Links und rechts davon liegen Streifen mit
+      abwechselnd normaler und umgekehrter Magnetisierung, auf beiden Seiten spiegelbildlich. Pfeile zeigen, dass sich
+      die Platten nach links und rechts voneinander entfernen. Das Gestein wird mit zunehmendem Abstand vom Rücken
+      älter.
+    </desc>
+
+    <defs>
+      <marker id="ms-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" class="arrowhead"></path>
+      </marker>
+    </defs>
+
+    <!-- plate motion -->
+    <line x1={mid - 14} y1="16" x2={mid - 90} y2="16" class="arrow" marker-end="url(#ms-arrow)"></line>
+    <line x1={mid + 14} y1="16" x2={mid + 90} y2="16" class="arrow" marker-end="url(#ms-arrow)"></line>
+
+    <!-- seafloor base -->
+    <rect x="12" y={top} width={W - 24} height={h} class="reversed"></rect>
+
+    <!-- mirrored stripes -->
+    {
+      stripes
+        .filter((s) => s.normal)
+        .map((s) => (
+          <>
+            <rect x={mid + s.from * scale} y={top} width={s.w * scale} height={h} class="normal" />
+            <rect x={mid - (s.from + s.w) * scale} y={top} width={s.w * scale} height={h} class="normal" />
+          </>
+        ))
+    }
+    <rect x="12" y={top} width={W - 24} height={h} class="outline"></rect>
+
+    <!-- ridge axis -->
+    <line x1={mid} y1={top - 6} x2={mid} y2={top + h + 6} class="ridge"></line>
+    <text x={mid} y={top + h + 20} class="label strong" text-anchor="middle">Rücken</text>
+
+    <!-- age axis -->
+    <text x="14" y={top + h + 20} class="label">alt</text>
+    <text x={W - 14} y={top + h + 20} class="label" text-anchor="end">alt</text>
+    <text x={mid - 34} y={top + h + 20} class="label" text-anchor="end">jung</text>
+    <text x={mid + 34} y={top + h + 20} class="label">jung</text>
+
+    <!-- legend -->
+    <g transform={`translate(12 ${top + h + 40})`}>
+      <rect y="1" width="12" height="11" class="normal swatch"></rect>
+      <text x="17" y="11" class="label">normal</text>
+      <rect x="80" y="1" width="12" height="11" class="reversed swatch"></rect>
+      <text x="97" y="11" class="label">umgekehrt magnetisiert</text>
+    </g>
+  </svg>
+
+  <div class="tiles">
+    <div class="tile">
+      <p class="tile-label">Heute: Mittelatlantischer Rücken</p>
+      <p class="tile-value">2,5 cm pro Jahr</p>
+      <p class="tile-note">25 km in einer Million Jahre</p>
+    </div>
+    <div class="tile flood">
+      <p class="tile-label">„Flut-Tempo“: Südamerika–Afrika in einem Jahr</p>
+      <p class="tile-value">2.850 km pro Jahr</p>
+      <p class="tile-note">fast 8 km am Tag, rund 100 Millionen Mal schneller</p>
+    </div>
+  </div>
+
+  <figcaption>
+    Schema, die Streifenbreiten sind nicht maßstäblich. Ausbreitungsrate:
+    <a href="https://pubs.usgs.gov/gip/dynamic/understanding.html">USGS, This Dynamic Earth</a>; kürzeste Distanz
+    Brasilien–Liberia rund 2.850 km:
+    <a href="https://www.britannica.com/place/Atlantic-Ocean">Britannica</a>.
+  </figcaption>
+</figure>
+
+<style>
+  .stripes {
+    margin: 2rem auto;
+    max-width: 32rem;
+    padding: 1rem 1rem 0.8rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font-ui);
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .normal {
+    fill: var(--chart-1);
+  }
+
+  .reversed {
+    fill: var(--surface-2);
+  }
+
+  .outline {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 1;
+  }
+
+  .swatch {
+    stroke: var(--border);
+    stroke-width: 1;
+  }
+
+  .ridge {
+    stroke: var(--check);
+    stroke-width: 3;
+  }
+
+  .arrow {
+    stroke: var(--text-muted);
+    stroke-width: 2;
+  }
+
+  .arrowhead {
+    fill: var(--text-muted);
+  }
+
+  .label {
+    font-size: 13px;
+    fill: var(--text-muted);
+  }
+
+  .label.strong {
+    font-weight: 650;
+    fill: var(--text);
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: 0.75rem;
+    margin-top: 0.6rem;
+  }
+
+  .tile {
+    padding: 0.7rem 0.9rem;
+    background: var(--surface-2);
+    border-radius: var(--radius);
+  }
+
+  .tile.flood {
+    background: var(--check-bg);
+    border: 1px solid var(--check-border);
+  }
+
+  .tile p {
+    margin: 0;
+  }
+
+  .tile-label {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--text-muted);
+  }
+
+  .tile-value {
+    margin-top: 0.2rem !important;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .tile-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  figcaption {
+    margin-top: 0.7rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+</style>
