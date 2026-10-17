@@ -1,0 +1,217 @@
+---
+// Schematic genetic bottleneck: a diverse population (many gene variants,
+// shown as colours) passes through two founders and loses most variants.
+
+const W = 320;
+const palette = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8'];
+
+// Deterministic pseudo-random positions (LCG) so the build output is stable
+function rng(seed: number) {
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) % 4294967296;
+    return s / 4294967296;
+  };
+}
+
+function scatter(cx: number, cy: number, rx: number, ry: number, n: number, colors: string[], seed: number) {
+  const r = rng(seed);
+  const dots: { x: number; y: number; c: string }[] = [];
+  let guard = 0;
+  while (dots.length < n && guard++ < 5000) {
+    const x = cx + (r() * 2 - 1) * rx;
+    const y = cy + (r() * 2 - 1) * ry;
+    if (((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 > 1) continue;
+    if (dots.some((d) => (d.x - x) ** 2 + (d.y - y) ** 2 < 11 ** 2)) continue;
+    dots.push({ x, y, c: colors[dots.length % colors.length] });
+  }
+  return dots;
+}
+
+const topY = 68;
+const neckY = 170;
+const bottomY = 272;
+const before = scatter(W / 2, topY, 128, 34, 40, palette, 7);
+// Two founders, two gene copies each: at most four variants survive
+const founders = [
+  { x: W / 2 - 22, alleles: ['c1', 'c3'] },
+  { x: W / 2 + 22, alleles: ['c2', 'c7'] },
+];
+const after = scatter(W / 2, bottomY, 128, 34, 40, ['c1', 'c3', 'c2', 'c7'], 11);
+
+// Hourglass outline
+const vessel = [
+  `M ${W / 2 - 150} ${topY - 46}`,
+  `L ${W / 2 + 150} ${topY - 46}`,
+  `C ${W / 2 + 150} ${topY + 60}, ${W / 2 + 44} ${neckY - 40}, ${W / 2 + 44} ${neckY}`,
+  `C ${W / 2 + 44} ${neckY + 40}, ${W / 2 + 150} ${bottomY - 60}, ${W / 2 + 150} ${bottomY + 46}`,
+  `L ${W / 2 - 150} ${bottomY + 46}`,
+  `C ${W / 2 - 150} ${bottomY - 60}, ${W / 2 - 44} ${neckY + 40}, ${W / 2 - 44} ${neckY}`,
+  `C ${W / 2 - 44} ${neckY - 40}, ${W / 2 - 150} ${topY + 60}, ${W / 2 - 150} ${topY - 46}`,
+  'Z',
+].join(' ');
+---
+
+<figure class="bottleneck">
+  <svg viewBox={`0 0 ${W} 342`} role="img" aria-labelledby="bn-title bn-desc">
+    <title id="bn-title">Schema: genetischer Flaschenhals</title>
+    <desc id="bn-desc">
+      Oben eine große Ausgangspopulation mit vielen Varianten eines Gens, dargestellt als acht verschiedene Farben. In
+      der Mitte der Flaschenhals: nur zwei Tiere mit je zwei Genkopien, also höchstens vier Varianten. Unten die
+      Nachkommen: wieder viele Tiere, aber nur noch mit diesen höchstens vier Varianten.
+    </desc>
+
+    <path d={vessel} class="vessel"></path>
+
+    <text x="8" y="14" class="label strong">Vorher: 8 Varianten</text>
+    {before.map((d) => <circle cx={d.x} cy={d.y} r="4.5" class={`dot ${d.c}`} />)}
+
+    {
+      founders.map((f) => (
+        <g>
+          <rect x={f.x - 13} y={neckY - 13} width="26" height="26" rx="13" class="founder" />
+          <circle cx={f.x - 5} cy={neckY} r="4.5" class={`dot ${f.alleles[0]}`} />
+          <circle cx={f.x + 5} cy={neckY} r="4.5" class={`dot ${f.alleles[1]}`} />
+        </g>
+      ))
+    }
+    <text x={W / 2 + 64} y={neckY - 4} class="label strong">2 Tiere</text>
+    <text x={W / 2 + 64} y={neckY + 11} class="label">je 2 Genkopien</text>
+
+    {after.map((d) => <circle cx={d.x} cy={d.y} r="4.5" class={`dot ${d.c}`} />)}
+    <text x="8" y="338" class="label strong">Nachher: höchstens 4 Varianten</text>
+  </svg>
+
+  <div class="tiles">
+    <div class="tile">
+      <p class="tile-label">Menschen nach der Arche</p>
+      <p class="tile-value">höchstens 10</p>
+      <p class="tile-note">Varianten je Gen (5 nicht verwandte Personen)</p>
+    </div>
+    <div class="tile">
+      <p class="tile-label">Heute bekannt beim Immungen HLA-B</p>
+      <p class="tile-value">über 11.000</p>
+      <p class="tile-note">Varianten (IPD-IMGT/HLA)</p>
+    </div>
+  </div>
+
+  <figcaption>
+    Schema: Jede Farbe steht für eine Variante desselben Gens. Zwei Gründertiere tragen zusammen höchstens vier
+    Varianten; alle anderen gehen verloren. HLA-Zahl:
+    <a href="https://www.ebi.ac.uk/ipd/imgt/hla/about/statistics/">IPD-IMGT/HLA-Datenbank</a>.
+  </figcaption>
+</figure>
+
+<style>
+  .bottleneck {
+    /* Categorical hues, validated light/dark (dataviz reference palette) */
+    --c1: #2a78d6;
+    --c2: #eb6834;
+    --c3: #1baf7a;
+    --c4: #eda100;
+    --c5: #e87ba4;
+    --c6: #008300;
+    --c7: #6250d6;
+    --c8: #e34948;
+
+    margin: 2rem auto;
+    max-width: 30rem;
+    padding: 1rem 1rem 0.8rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font-ui);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .bottleneck {
+      --c1: #3987e5;
+      --c2: #d95926;
+      --c3: #199e70;
+      --c4: #c98500;
+      --c5: #d55181;
+      --c6: #008300;
+      --c7: #9085e9;
+      --c8: #e66767;
+    }
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .vessel {
+    fill: var(--surface-2);
+    stroke: var(--border);
+    stroke-width: 1;
+  }
+
+  .dot {
+    stroke: var(--surface);
+    stroke-width: 1.5;
+  }
+
+  .c1 { fill: var(--c1); }
+  .c2 { fill: var(--c2); }
+  .c3 { fill: var(--c3); }
+  .c4 { fill: var(--c4); }
+  .c5 { fill: var(--c5); }
+  .c6 { fill: var(--c6); }
+  .c7 { fill: var(--c7); }
+  .c8 { fill: var(--c8); }
+
+  .founder {
+    fill: var(--surface);
+    stroke: var(--text-muted);
+    stroke-width: 1;
+  }
+
+  .label {
+    font-size: 13px;
+    fill: var(--text-muted);
+  }
+
+  .label.strong {
+    font-weight: 650;
+    fill: var(--text);
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: 0.75rem;
+    margin-top: 0.6rem;
+  }
+
+  .tile {
+    padding: 0.7rem 0.9rem;
+    background: var(--surface-2);
+    border-radius: var(--radius);
+  }
+
+  .tile p {
+    margin: 0;
+  }
+
+  .tile-label,
+  .tile-note {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--text-muted);
+  }
+
+  .tile-value {
+    margin: 0.2rem 0 !important;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  figcaption {
+    margin-top: 0.7rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+</style>
