@@ -7,6 +7,7 @@ export const mainNav = [
 ];
 
 export const footerNav = [
+  { href: '/ueber/', label: 'Über diese Seite' },
   { href: '/rechtliches/#impressum', label: 'Impressum' },
   { href: '/rechtliches/#datenschutz', label: 'Datenschutz' },
 ];

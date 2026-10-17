@@ -7,7 +7,7 @@ const abs = (path: string) => new URL(path, SITE).href;
 const author = {
   '@type': 'Person',
   name: 'Martin Schönebeck',
-  url: abs('/rechtliches/#impressum'),
+  url: abs('/ueber/'),
 };
 
 export function websiteSchema(description: string) {
