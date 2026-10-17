@@ -18,6 +18,8 @@
   --fazit-bg: #0b4f7c;
   --fazit-text: #f4f8fb;
   --focus: #d97706;
+  --chart-1: #2a78d6;
+  --chart-grid: #e3e6e9;
 
   --radius: 10px;
   --measure: 42rem;
@@ -42,6 +44,8 @@
     --fazit-bg: #173e5a;
     --fazit-text: #eef5fa;
     --focus: #fbbf24;
+    --chart-1: #3987e5;
+    --chart-grid: #2b343c;
   }
 }
 
