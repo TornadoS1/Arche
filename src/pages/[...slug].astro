@@ -24,7 +24,7 @@ const jsonLd = [
 ---
 
 <BaseLayout {title} {seoTitle} {description} ogImage={page.data.ogImage} {jsonLd}>
-  <div class="page">
+  <div class:list={['page', { 'no-toc': !page.data.toc }]}>
     <header class="page-header">
       <h1>{page.data.title}</h1>
     </header>
@@ -53,6 +53,13 @@ const jsonLd = [
       'body toc';
     column-gap: 3.5rem;
     justify-content: center;
+  }
+
+  .page.no-toc {
+    grid-template-columns: minmax(0, var(--measure));
+    grid-template-areas:
+      'head'
+      'body';
   }
 
   .page-header {
