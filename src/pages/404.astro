@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { mainNav, withBase } from '../nav';
+---
+
+<BaseLayout
+  title="Seite nicht gefunden"
+  description="Die angeforderte Seite gibt es auf archenoahmythos.de nicht (mehr)."
+  noindex
+>
+  <div class="not-found prose">
+    <h1>Seite nicht gefunden</h1>
+    <p>Diese Adresse gibt es auf archenoahmythos.de nicht (mehr). Vielleicht hilft einer dieser Einstiege weiter:</p>
+    <ul>
+      <li><a href={withBase('/')}>Startseite</a></li>
+      {mainNav.map((item) => <li><a href={withBase(item.href)}>{item.label}</a></li>)}
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 2.5rem 1rem 0;
+  }
+</style>
