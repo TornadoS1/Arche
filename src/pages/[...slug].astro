@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TOC from '../components/TOC.astro';
+import { articleSchema, breadcrumbSchema } from '../structured-data';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
@@ -11,9 +12,18 @@ export async function getStaticPaths() {
 
 const { page } = Astro.props;
 const { Content, headings } = await render(page);
+
+const { title, seoTitle, description, ogImage = '/images/og-default.jpg', updated, type } = page.data;
+const path = `/${page.id}/`;
+const jsonLd = [
+  ...(type === 'article'
+    ? [articleSchema({ path, title, headline: seoTitle ?? title, description, image: ogImage, updated })]
+    : []),
+  breadcrumbSchema({ path, title }),
+];
 ---
 
-<BaseLayout title={page.data.title} description={page.data.description} ogImage={page.data.ogImage}>
+<BaseLayout {title} {seoTitle} {description} ogImage={page.data.ogImage} {jsonLd}>
   <div class="page">
     <header class="page-header">
       <h1>{page.data.title}</h1>

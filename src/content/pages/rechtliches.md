@@ -3,6 +3,7 @@ title: 'Rechtliches'
 navTitle: 'Rechtliches'
 description: 'Impressum und Datenschutzerklärung von archenoahmythos.de: Hosting über GitHub Pages, keine Cookies, kein Tracking.'
 order: 5
+type: 'page'
 ---
 
 ## Impressum

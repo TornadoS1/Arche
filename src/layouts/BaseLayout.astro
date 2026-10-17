@@ -6,15 +6,20 @@ import { mainNav, footerNav, SITE_NAME, BASE, withBase } from '../nav';
 
 interface Props {
   title: string;
+  // Full <title> for search results; replaces "title – site name"
+  seoTitle?: string;
   description: string;
   ogImage?: string;
   isHome?: boolean;
   // Error pages: no canonical URL, kept out of search indexes
   noindex?: boolean;
+  // schema.org objects, emitted as JSON-LD
+  jsonLd?: object[];
 }
 
-const { title, description, ogImage = '/images/og-default.jpg', isHome = false, noindex = false } = Astro.props;
-const pageTitle = isHome ? `${title} | ${SITE_NAME}` : `${title} – ${SITE_NAME}`;
+const { title, seoTitle, description, ogImage = '/images/og-default.jpg', isHome = false, noindex = false, jsonLd = [] } =
+  Astro.props;
+const pageTitle = seoTitle ?? (isHome ? `${title} | ${SITE_NAME}` : `${title} – ${SITE_NAME}`);
 // Path relative to the base, so canonical/OG URLs always point at the production domain
 const path = Astro.url.pathname.slice(BASE.length) || '/';
 const canonical = new URL(path, Astro.site);
@@ -39,13 +44,14 @@ const current = path.replace(/\/?$/, '/');
     <meta property="og:type" content={isHome ? 'website' : 'article'} />
     <meta property="og:locale" content="de_DE" />
     <meta property="og:site_name" content={SITE_NAME} />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={seoTitle ?? title} />
     <meta property="og:description" content={description} />
     {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
   </head>
   <body>
     <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>

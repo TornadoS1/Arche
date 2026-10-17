@@ -1,13 +1,21 @@
 ---
 import { getEntry, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { websiteSchema } from '../structured-data';
 
 const page = await getEntry('pages', 'startseite');
 if (!page) throw new Error('Missing content: startseite');
 const { Content } = await render(page);
 ---
 
-<BaseLayout title={page.data.title} description={page.data.description} ogImage={page.data.ogImage} isHome>
+<BaseLayout
+  title={page.data.title}
+  seoTitle={page.data.seoTitle}
+  description={page.data.description}
+  ogImage={page.data.ogImage}
+  jsonLd={[websiteSchema(page.data.description)]}
+  isHome
+>
   <div class="home prose">
     <Content />
   </div>
