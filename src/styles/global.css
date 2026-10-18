@@ -29,23 +29,24 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #12171c;
-    --surface: #192027;
-    --surface-2: #1f2830;
-    --text: #e5e9ed;
-    --text-muted: #a3adb7;
-    --border: #2e3943;
+    /* Softened contrast (text/bg ~11:1) so light text does not glare on a near-black page */
+    --bg: #1c2229;
+    --surface: #232b33;
+    --surface-2: #28313a;
+    --text: #d2d8de;
+    --text-muted: #a0abb5;
+    --border: #37424d;
     --accent: #7cc0ec;
     --accent-strong: #a8d6f4;
-    --accent-soft: #1b3346;
+    --accent-soft: #213a4e;
     --check: #f3c27f;
-    --check-bg: #2a2117;
+    --check-bg: #31271b;
     --check-border: #6b4a1f;
     --fazit-bg: #173e5a;
     --fazit-text: #eef5fa;
     --focus: #fbbf24;
     --chart-1: #3987e5;
-    --chart-grid: #2b343c;
+    --chart-grid: #343e48;
   }
 }
 
