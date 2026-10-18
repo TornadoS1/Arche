@@ -77,6 +77,17 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Large screens: scale type and column together so the line length stays at ~70 characters */
+@media (min-width: 75rem) {
+  :root {
+    --measure: 46rem;
+  }
+
+  body {
+    font-size: 1.25rem;
+  }
+}
+
 img,
 svg {
   max-width: 100%;
