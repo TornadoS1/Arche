@@ -42,25 +42,13 @@ const prose = (page.body ?? '')
   .replace(/^\[\^[^\]]+\]:.*$/gm, '')
   .replace(/<[^>]+>/g, ' ');
 const minutes = Math.max(1, Math.round(prose.split(/\s+/).filter(Boolean).length / 200));
-const updatedLabel = updated?.toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 
 <BaseLayout {title} {seoTitle} {description} ogImage={page.data.ogImage} {jsonLd}>
   <div class:list={['page', { 'no-toc': !page.data.toc }]}>
     <header class="page-header">
       <h1>{page.data.title}</h1>
-      {
-        type === 'article' && (
-          <p class="meta">
-            {minutes} Min. Lesezeit
-            {updated && (
-              <>
-                {' · '}aktualisiert am <time datetime={updated.toISOString().slice(0, 10)}>{updatedLabel}</time>
-              </>
-            )}
-          </p>
-        )
-      }
+      {type === 'article' && <p class="meta">{minutes} Min. Lesezeit</p>}
     </header>
     {
       page.data.toc && (
