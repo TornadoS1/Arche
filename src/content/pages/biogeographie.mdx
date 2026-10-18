@@ -5,11 +5,22 @@ navTitle: 'Biogeographie'
 description: 'Kängurus, Koalas, Lemuren und die Wallace-Linie: Warum die heutige Verbreitung der Tiere nicht zu einer Ausbreitung vom Berg Ararat vor 4.000 Jahren passt.'
 updated: 2026-10-17
 order: 2
+faq:
+  - q: 'Konnten die Tiere nicht über eiszeitliche Landbrücken wandern?'
+    a: 'Die Landbrücken gab es, als der Meeresspiegel auf dem Höhepunkt der letzten Eiszeit vor rund 20.000 bis 30.000 Jahren etwa 130 Meter tiefer lag. Zur Zeit der angeblichen Flut vor rund 4.000 Jahren waren sie längst wieder überflutet. Die tiefe Lombokstraße an der Wallace-Linie war selbst in den Eiszeiten eine Barriere.'
+    section: '3-die-wallace-linie-die-grenze-der-fakten'
+  - q: 'Warum findet man keine fossilen Kängurus in Asien?'
+    a: 'Weil die Beuteltiere nie durch Asien gewandert sind. Fossile Beuteltiere gibt es außerhalb Australiens in Südamerika und in der Antarktis, und genetische Analysen zeigen eine einzige Einwanderung aus Südamerika über die Antarktis. Das passt zum alten Südkontinent Gondwana, nicht zu einem Marsch vom Ararat.'
+    section: '1-das-rätsel-der-isolierten-arten'
+  - q: 'Wie hätte ein Koala den Weg vom Ararat nach Australien schaffen sollen?'
+    a: 'Koalas fressen fast nur Eukalyptus, rund 500 bis 1.000 Gramm am Tag, und der wächst auf fast der gesamten Strecke nicht. Schon die Luftlinie beträgt rund 13.400 Kilometer. Auf dem ganzen asiatischen Kontinent gibt es außerdem weder lebende noch fossile Koalas.'
+    section: 'das-koala-paradoxon-ein-15000-kilometer-langer-imbiss'
 ---
 
 import Figure from '../../components/Figure.astro';
 import SintflutCheck from '../../components/SintflutCheck.astro';
 import Ergebnis from '../../components/Ergebnis.astro';
+import FAQ from '../../components/FAQ.astro';
 import Fazit from '../../components/Fazit.astro';
 import WallaceMap from '../../components/WallaceMap.astro';
 import KoalaMap from '../../components/KoalaMap.astro';
@@ -75,6 +86,8 @@ Kurz gesagt: Ohne ein Wunder-Abo für frischen Eukalyptus-Lieferservice entlang 
 <KoalaMap />
 
 <Figure src={imgKoala} alt="Koala-Mutter mit einem Jungtier auf dem Rücken an einem Baumstamm, daneben Eukalyptuszweige." />
+
+<FAQ items={frontmatter.faq} />
 
 [^dendrolagus]: Eldridge, M. D. B. et al. (2018): Phylogenetic analysis of the tree-kangaroos (*Dendrolagus*) reveals multiple divergent lineages within New Guinea. *Molecular Phylogenetics and Evolution* 127, 589–599. [doi:10.1016/j.ympev.2018.05.030](https://doi.org/10.1016/j.ympev.2018.05.030)
 

@@ -3,11 +3,19 @@ import type { MarkdownHeading } from 'astro';
 
 interface Props {
   headings: MarkdownHeading[];
+  // A section rendered outside the Markdown (e.g. the FAQ), listed before the sources
+  extra?: { slug: string; text: string };
 }
 
+const { headings, extra } = Astro.props;
+
 // Pages with several h2 sections list those; single-section pages list their h3 steps.
-const h2 = Astro.props.headings.filter((h) => h.depth === 2);
-const items = h2.length >= 2 ? h2 : Astro.props.headings.filter((h) => h.depth === 3);
+const h2 = headings.filter((h) => h.depth === 2);
+let items: { slug: string; text: string }[] = h2.length >= 2 ? h2 : headings.filter((h) => h.depth === 3);
+if (extra) {
+  const sources = items.findIndex((h) => h.slug === 'footnote-label');
+  items = sources >= 0 ? [...items.slice(0, sources), extra, ...items.slice(sources)] : [...items, extra];
+}
 ---
 
 {
@@ -24,6 +32,39 @@ const items = h2.length >= 2 ? h2 : Astro.props.headings.filter((h) => h.depth =
     </nav>
   )
 }
+
+<script>
+  // Highlight the section currently being read: the last listed heading above the top quarter of the viewport
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.toc a')];
+  const targets = links
+    .map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))))
+    .filter((el): el is HTMLElement => el !== null);
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const line = window.innerHeight / 4;
+    let active = -1;
+    targets.forEach((el, i) => {
+      if (el.getBoundingClientRect().top <= line) active = i;
+    });
+    links.forEach((a, i) => (i === active ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+  };
+
+  if (targets.length === links.length && links.length > 0) {
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    update();
+  }
+</script>
 
 <style>
   .toc {
@@ -56,10 +97,19 @@ const items = h2.length >= 2 ? h2 : Astro.props.headings.filter((h) => h.depth =
   }
 
   a {
+    display: block;
+    margin-left: -0.6rem;
+    padding-left: calc(0.6rem - 3px);
+    border-left: 3px solid transparent;
     text-decoration: none;
   }
 
   a:hover {
     text-decoration: underline;
+  }
+
+  a[aria-current='true'] {
+    border-left-color: var(--accent);
+    font-weight: 600;
   }
 </style>

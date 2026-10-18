@@ -2,41 +2,96 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TOC from '../components/TOC.astro';
-import { articleSchema, breadcrumbSchema } from '../structured-data';
+import { articleSchema, breadcrumbSchema, faqSchema } from '../structured-data';
+import { withBase } from '../nav';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
+  // Topic articles in reading order, for the previous/next links
+  const articles = pages
+    .filter((p) => p.id !== 'startseite' && p.data.type === 'article')
+    .sort((a, b) => a.data.order - b.data.order);
   // The start page is served at "/" (see index.astro)
-  return pages.filter((p) => p.id !== 'startseite').map((page) => ({ params: { slug: page.id }, props: { page } }));
+  return pages
+    .filter((p) => p.id !== 'startseite')
+    .map((page) => {
+      const i = articles.indexOf(page);
+      return {
+        params: { slug: page.id },
+        props: { page, prev: i > 0 ? articles[i - 1] : undefined, next: i >= 0 ? articles[i + 1] : undefined },
+      };
+    });
 }
 
-const { page } = Astro.props;
+const { page, prev, next } = Astro.props;
 const { Content, headings } = await render(page);
 
-const { title, seoTitle, description, ogImage = '/images/og-default.jpg', updated, type } = page.data;
+const { title, seoTitle, description, ogImage = '/images/og-default.jpg', updated, type, faq } = page.data;
 const path = `/${page.id}/`;
 const jsonLd = [
   ...(type === 'article'
     ? [articleSchema({ path, title, headline: seoTitle ?? title, description, image: ogImage, updated })]
     : []),
+  ...(faq.length > 0 ? [faqSchema(faq)] : []),
   breadcrumbSchema({ path, title }),
 ];
+
+// Reading time from the prose only: drop imports, JSX tags and footnote definitions
+const prose = (page.body ?? '')
+  .replace(/^import .*$/gm, '')
+  .replace(/^\[\^[^\]]+\]:.*$/gm, '')
+  .replace(/<[^>]+>/g, ' ');
+const minutes = Math.max(1, Math.round(prose.split(/\s+/).filter(Boolean).length / 200));
+const updatedLabel = updated?.toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 
 <BaseLayout {title} {seoTitle} {description} ogImage={page.data.ogImage} {jsonLd}>
   <div class:list={['page', { 'no-toc': !page.data.toc }]}>
     <header class="page-header">
       <h1>{page.data.title}</h1>
+      {
+        type === 'article' && (
+          <p class="meta">
+            {minutes} Min. Lesezeit
+            {updated && (
+              <>
+                {' · '}aktualisiert am <time datetime={updated.toISOString().slice(0, 10)}>{updatedLabel}</time>
+              </>
+            )}
+          </p>
+        )
+      }
     </header>
     {
       page.data.toc && (
         <aside class="page-toc">
-          <TOC headings={headings} />
+          <TOC
+            headings={headings}
+            extra={faq.length > 0 ? { slug: 'haeufige-einwaende', text: 'Häufige Einwände' } : undefined}
+          />
         </aside>
       )
     }
     <article class="prose">
       <Content />
+      {
+        (prev || next) && (
+          <nav class="pager" aria-label="Weitere Themen">
+            {prev && (
+              <a class="prev" href={withBase(`/${prev.id}/`)} rel="prev">
+                <span class="dir">← Zurück</span>
+                <span class="name">{prev.data.navTitle}</span>
+              </a>
+            )}
+            {next && (
+              <a class="next" href={withBase(`/${next.id}/`)} rel="next">
+                <span class="dir">Weiter →</span>
+                <span class="name">{next.data.navTitle}</span>
+              </a>
+            )}
+          </nav>
+        )
+      }
     </article>
   </div>
 </BaseLayout>
@@ -52,7 +107,8 @@ const jsonLd = [
       'head head'
       'body toc';
     column-gap: 3.5rem;
-    justify-content: center;
+    /* Text starts at the logo's edge and the TOC ends at the nav's edge */
+    justify-content: space-between;
   }
 
   .page.no-toc {
@@ -60,11 +116,19 @@ const jsonLd = [
     grid-template-areas:
       'head'
       'body';
+    justify-content: center;
   }
 
   .page-header {
     grid-area: head;
     margin-bottom: 1.5rem;
+  }
+
+  .meta {
+    margin: 0;
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: var(--text-muted);
   }
 
   .page-toc {
@@ -81,6 +145,44 @@ const jsonLd = [
     min-width: 0;
   }
 
+  .pager {
+    display: flex;
+    gap: 1rem;
+    margin-top: 3rem;
+    font-family: var(--font-ui);
+  }
+
+  .pager a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    text-decoration: none;
+  }
+
+  .pager a:hover {
+    border-color: var(--accent);
+  }
+
+  .pager .next {
+    margin-left: auto;
+    text-align: right;
+  }
+
+  .pager .dir {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .pager .name {
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
   @media (max-width: 960px) {
     .page {
       grid-template-columns: minmax(0, var(--measure));
@@ -88,6 +190,7 @@ const jsonLd = [
         'head'
         'toc'
         'body';
+      justify-content: center;
     }
 
     .page-toc {

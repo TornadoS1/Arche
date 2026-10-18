@@ -1,0 +1,71 @@
+---
+// "Häufige Einwände" block at the end of an article; data comes from the page's `faq` frontmatter.
+interface Props {
+  items: { q: string; a: string; section: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <section class="faq" aria-labelledby="haeufige-einwaende">
+      <h2 id="haeufige-einwaende">Häufige Einwände</h2>
+      {items.map((item) => (
+        <details>
+          <summary>{item.q}</summary>
+          <p>
+            {item.a} <a href={`#${item.section}`}>Mehr dazu</a>
+          </p>
+        </details>
+      ))}
+    </section>
+  )
+}
+
+<style>
+  details {
+    border-bottom: 1px solid var(--border);
+  }
+
+  details:first-of-type {
+    border-top: 1px solid var(--border);
+  }
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    padding: 0.9rem 2rem 0.9rem 0;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 1.02rem;
+    line-height: 1.4;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: '+';
+    position: absolute;
+    right: 0.25rem;
+    top: 0.75rem;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  details[open] summary::after {
+    content: '–';
+  }
+
+  summary:hover {
+    color: var(--accent);
+  }
+
+  details p {
+    margin: 0 0 1rem;
+  }
+</style>
