@@ -3,19 +3,11 @@ import type { MarkdownHeading } from 'astro';
 
 interface Props {
   headings: MarkdownHeading[];
-  // A section rendered outside the Markdown (e.g. the FAQ), listed before the sources
-  extra?: { slug: string; text: string };
 }
-
-const { headings, extra } = Astro.props;
 
 // Pages with several h2 sections list those; single-section pages list their h3 steps.
-const h2 = headings.filter((h) => h.depth === 2);
-let items: { slug: string; text: string }[] = h2.length >= 2 ? h2 : headings.filter((h) => h.depth === 3);
-if (extra) {
-  const sources = items.findIndex((h) => h.slug === 'footnote-label');
-  items = sources >= 0 ? [...items.slice(0, sources), extra, ...items.slice(sources)] : [...items, extra];
-}
+const h2 = Astro.props.headings.filter((h) => h.depth === 2);
+const items = h2.length >= 2 ? h2 : Astro.props.headings.filter((h) => h.depth === 3);
 ---
 
 {

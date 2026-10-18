@@ -16,9 +16,6 @@ const pages = defineCollection({
     // 'article' pages get Article structured data, 'page' only breadcrumbs
     type: z.enum(['article', 'page']).default('article'),
     updated: z.coerce.date().optional(),
-    // Common objections, rendered at the end of the article and emitted as FAQPage data.
-    // Answers are plain text; `section` is the heading anchor that covers the topic in depth.
-    faq: z.array(z.object({ q: z.string(), a: z.string(), section: z.string() })).default([]),
   }),
 });
 

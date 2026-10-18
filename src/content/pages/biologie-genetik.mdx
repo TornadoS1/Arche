@@ -5,22 +5,11 @@ navTitle: 'Biologie & Genetik'
 description: 'Genetischer Flaschenhals, Räuber-Beute-Beziehungen und wirtsspezifische Parasiten: Warum ein Neustart der Tierwelt aus einzelnen Paaren biologisch nicht funktioniert.'
 updated: 2026-10-17
 order: 3
-faq:
-  - q: 'Hätten sieben Paare statt einem nicht gereicht?'
-    a: 'Auch sieben Paare sind ein extremer genetischer Flaschenhals mit sehr hohem Aussterberisiko. Nördliche See-Elefanten wurden im 19. Jahrhundert auf vermutlich weniger als 30 Tiere dezimiert und sind bis heute genetisch verarmt. Eine solche junge, gleichzeitige Verarmung müsste man bei allen Arten finden, findet sie aber nicht.'
-    section: '1-der-genetische-flaschenhals-inzucht-tod'
-  - q: 'Wie viel genetische Vielfalt hätten die Menschen auf der Arche weitergeben können?'
-    a: 'Nur fünf der acht Personen waren nicht miteinander verwandt. Sie hätten von jedem Gen höchstens zehn Varianten weitergeben können. Für das Immungen HLA-B sind heute über 11.000 Varianten bekannt.'
-    section: '1-der-genetische-flaschenhals-inzucht-tod'
-  - q: 'Wo hätten Krankheitserreger wie Masern überlebt?'
-    a: 'Masern halten sich nur in Bevölkerungen von grob einer Viertel- bis einer halben Million Menschen dauerhaft, und wer sie überstanden hat, ist lebenslang immun. In einer Gruppe von acht Menschen wäre das Virus nach wenigen Wochen verschwunden.'
-    section: '3-das-parasiten-problem'
 ---
 
 import Figure from '../../components/Figure.astro';
 import SintflutCheck from '../../components/SintflutCheck.astro';
 import Ergebnis from '../../components/Ergebnis.astro';
-import FAQ from '../../components/FAQ.astro';
 import Fazit from '../../components/Fazit.astro';
 import BottleneckDiagram from '../../components/BottleneckDiagram.astro';
 import imgDna from '../../assets/images/biologie-genetik.jpg';
@@ -73,8 +62,6 @@ Die Natur ist kein Archiv, das man löschen und mit zwei Exemplaren wiederherste
 </Fazit>
 
 <Figure src={imgDna} alt="Künstlerische Darstellung einer DNA-Doppelhelix vor dunklem Hintergrund mit leuchtenden blauen und orangefarbenen Lichtpunkten." />
-
-<FAQ items={frontmatter.faq} />
 
 [^seal1993]: Hoelzel, A. R. et al. (1993): Elephant Seal Genetic Variation and the Use of Simulation Models to Investigate Historical Population Bottlenecks. *Journal of Heredity* 84, 443–449. [doi:10.1093/oxfordjournals.jhered.a111370](https://doi.org/10.1093/oxfordjournals.jhered.a111370)
 

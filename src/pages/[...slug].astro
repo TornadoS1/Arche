@@ -2,7 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TOC from '../components/TOC.astro';
-import { articleSchema, breadcrumbSchema, faqSchema } from '../structured-data';
+import { articleSchema, breadcrumbSchema } from '../structured-data';
 import { withBase } from '../nav';
 
 export async function getStaticPaths() {
@@ -26,13 +26,12 @@ export async function getStaticPaths() {
 const { page, prev, next } = Astro.props;
 const { Content, headings } = await render(page);
 
-const { title, seoTitle, description, ogImage = '/images/og-default.jpg', updated, type, faq } = page.data;
+const { title, seoTitle, description, ogImage = '/images/og-default.jpg', updated, type } = page.data;
 const path = `/${page.id}/`;
 const jsonLd = [
   ...(type === 'article'
     ? [articleSchema({ path, title, headline: seoTitle ?? title, description, image: ogImage, updated })]
     : []),
-  ...(faq.length > 0 ? [faqSchema(faq)] : []),
   breadcrumbSchema({ path, title }),
 ];
 
@@ -53,10 +52,7 @@ const minutes = Math.max(1, Math.round(prose.split(/\s+/).filter(Boolean).length
     {
       page.data.toc && (
         <aside class="page-toc">
-          <TOC
-            headings={headings}
-            extra={faq.length > 0 ? { slug: 'haeufige-einwaende', text: 'Häufige Einwände' } : undefined}
-          />
+          <TOC headings={headings} />
         </aside>
       )
     }

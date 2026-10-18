@@ -5,25 +5,11 @@ navTitle: 'Geologie'
 description: 'Eisbohrkerne, Fossilienabfolge, Plattentektonik und Korallenriffe: Was die geologischen Archive der Erde über eine globale Sintflut vor rund 4.000 Jahren verraten.'
 updated: 2026-10-17
 order: 1
-faq:
-  - q: 'Könnten im Eis nicht mehrere Schichten pro Jahr entstanden sein?'
-    a: 'Die grönländische Schichtzählung über rund 60.000 Jahre stimmt eng mit unabhängig datierten Tropfsteinen überein, und in der Antarktis kommen ganz andere Methoden wie Eisflussmodelle und eingeschlossene Luft zu passenden Ergebnissen. Vor allem aber fehlt in den Bohrkernen die Schlammschicht, die eine globale Flut vor rund 4.000 Jahren hinterlassen hätte.'
-    section: 'das-klima-archiv-warum-eis-nicht-lügen-kann'
-  - q: 'Hat die Flut die Fossilien nicht einfach nach Gewicht sortiert?'
-    a: 'Nein. In vielen Schichten liegen leichte und schwere, kleine und große Fossilien nebeneinander. Selbst kleine, flinke Säugetiere tauchen erst in viel jüngeren Schichten auf als schwerfällige Dinosaurier. Die Abfolge richtet sich danach, wann die Gruppen auftraten, nicht nach ihrem Gewicht.'
-    section: 'das-fossilien-archiv-die-unbestechliche-chronologie-der-erde'
-  - q: 'Könnten sich die Kontinente nicht doch in wenigen Monaten verschoben haben?'
-    a: 'Die dabei frei werdende Wärme hätte die Ozeane zum Kochen gebracht. Selbst John Baumgardner, der bekannteste Vertreter der „katastrophischen Plattentektonik“, nennt die Abkühlung des Ozeanbodens eines der größten Probleme seines Modells. Die Magnetstreifen am Meeresboden zeigen stattdessen eine Ausbreitung von einigen Zentimetern pro Jahr.'
-    section: 'plattentektonik-das-problem-der-turbo-kontinente'
-  - q: 'Woher weiß man, dass Korallenriffe älter als 4.000 Jahre sind?'
-    a: 'Auf dem Enewetak-Atoll liegt über dem vulkanischen Untergrund eine mehr als 1.200 Meter mächtige Abfolge von Kalkstein, der in flachem Wasser entstanden ist. Die untersten Schichten stammen aus dem Eozän und sind viele Millionen Jahre alt.'
-    section: 'das-korallen-archiv-steinerne-zeugen-der-zeit'
 ---
 
 import Figure from '../../components/Figure.astro';
 import SintflutCheck from '../../components/SintflutCheck.astro';
 import Ergebnis from '../../components/Ergebnis.astro';
-import FAQ from '../../components/FAQ.astro';
 import Fazit from '../../components/Fazit.astro';
 import FurtherLinks from '../../components/FurtherLinks.astro';
 import IceCoreDiagram from '../../components/IceCoreDiagram.astro';
@@ -200,8 +186,6 @@ Ein Korallenriff kann man nicht im Zeitraffer bauen. Seine bloße Existenz zeigt
 <FurtherLinks>[Planet Wissen: Korallenriffe](https://www.planet-wissen.de/natur/meer/korallenriffe/index.html) · [NOAA Coral Reef Conservation Program](https://coralreef.noaa.gov/)</FurtherLinks>
 
 <Figure src={imgKorallen} alt="Korallenriff mit Tisch- und Geweihkorallen in klarem, blauem Wasser." />
-
-<FAQ items={frontmatter.faq} />
 
 [^gicc05]: Svensson, A. et al. (2008): A 60 000 year Greenland stratigraphic ice core chronology. *Climate of the Past* 4, 47–57. [doi:10.5194/cp-4-47-2008](https://doi.org/10.5194/cp-4-47-2008)
 

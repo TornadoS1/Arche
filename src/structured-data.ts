@@ -51,18 +51,6 @@ export function articleSchema(page: PageInfo) {
   };
 }
 
-export function faqSchema(items: { q: string; a: string }[]) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: items.map((item) => ({
-      '@type': 'Question',
-      name: item.q,
-      acceptedAnswer: { '@type': 'Answer', text: item.a },
-    })),
-  };
-}
-
 export function breadcrumbSchema(page: Pick<PageInfo, 'path' | 'title'>) {
   return {
     '@context': 'https://schema.org',

@@ -5,21 +5,10 @@ navTitle: 'Ökologie'
 description: 'Salzgehalt, Schlamm, Licht und Temperatur: Warum eine globale Flut ausgerechnet das Leben im Wasser und die Pflanzenwelt vernichtet hätte.'
 updated: 2026-10-17
 order: 4
-faq:
-  - q: 'Fische waren doch schon im Wasser. Warum hätten sie nicht überlebt?'
-    a: 'Um den Mount Everest zu bedecken, hätte sich das Meerwasser mit dem 2,4- bis 3,4-Fachen seiner Menge an Flutwasser vermischt. Der Salzgehalt wäre auf etwa 8 bis 10 Gramm pro Kilogramm gefallen: für Meeresfische viel zu süß, für Süßwasserfische viel zu salzig.'
-    section: '1-der-osmotische-schock-salz-vs-süß'
-  - q: 'Was wäre mit Korallenriffen und Plankton passiert?'
-    a: 'Flachwasser-Lebensräume hätten plötzlich Tausende Meter tief gelegen. Schon unterhalb von rund 200 Metern reicht das Licht nicht mehr für Photosynthese. Dazu kämen Schlamm, der Kiemen verstopft und das Licht schluckt, und Temperaturschwankungen, auf die Korallen schon heute mit Bleiche reagieren.'
-    section: '2-der-sintflut-check'
-  - q: 'Hätten Landpflanzen die Flut als Samen überstehen können?'
-    a: 'Ein Jahr in dunkler, salziger Schlammbrühe hätten Pflanzen nicht überstanden; ohne Photosynthese sterben sie nach kurzer Zeit. Danach wäre der Boden so versalzen gewesen, dass über Jahre kaum ein Samen hätte keimen können.'
-    section: '3-das-pflanzen-sterben'
 ---
 
 import SintflutCheck from '../../components/SintflutCheck.astro';
 import Ergebnis from '../../components/Ergebnis.astro';
-import FAQ from '../../components/FAQ.astro';
 import Fazit from '../../components/Fazit.astro';
 import SalinityChart from '../../components/SalinityChart.astro';
 
@@ -69,8 +58,6 @@ Die Ökologie der Erde ist ein fein abgestimmtes System aus Licht, Salzgehalt un
 Die Sintflut wäre kein Neustart für das Leben gewesen, sondern seine totale Vernichtung – im Wasser wie an Land. Die Existenz empfindlicher Ökosysteme spricht klar gegen ein Jahr im globalen „Mixer“.
 
 </Fazit>
-
-<FAQ items={frontmatter.faq} />
 
 [^bullenhai]: Florida Museum of Natural History: *Carcharhinus leucas* – Bull Shark (Discover Fishes). [floridamuseum.ufl.edu](https://www.floridamuseum.ufl.edu/discover-fish/species-profiles/carcharhinus-leucas/)
 
